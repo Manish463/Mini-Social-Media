@@ -1,6 +1,6 @@
 // importing packages and modules
 import express from 'express'
-import cookieParser from 'cookie-parser'
+import cors from 'cors'
 import 'dotenv/config'
 
 // importing user defined modules
@@ -15,7 +15,7 @@ const app = express()
 // middlewares
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use(cookieParser())
+app.use(cors())
 
 // mounting the routers
 app.use('/', indexRouter)
