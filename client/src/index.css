@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+:root {
+  /* Backgrounds */
+  --bg-main: #F9FAFB; /* Soft neutral white-gray */
+  --card-bg: #FFFFFF; /* Clear white for cards */
+  --input-bg: #F1F5F9; /* Slightly grayish for input fields */
+
+  /* Text */
+  --text-primary: #1E293B; /* Deep gray-blue for excellent readability */
+  --text-secondary: #475569; /* Medium gray-blue for secondary text */
+
+  /* Buttons */
+  --btn-primary: #2563EB; /* Rich blue (visible, not washed out) */
+  --btn-hover: #1D4ED8; /* Slightly darker blue for hover effect */
+
+  /* Borders & Shadows */
+  --border-color: #CBD5E1; /* Subtle but visible border */
+  --card-shadow: rgba(0, 0, 0, 0.08); /* Gentle shadow for elevation */
+
+  /* Accents */
+  --accent-like: #DC2626; /* Vibrant red for like buttons, notifications, etc. */
+}
+
+
+[data-theme="dark"] {
+    --bg-gradient: linear-gradient(120deg, #18181B, #1F2937);
+    --bg-main: #0F172A;
+    --card-bg: #1E293B;
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --btn-primary: #3B82F6;
+    --btn-hover: #60A5FA;
+    --border-color: #334155;
+    --input-bg: #293241;
+    --card-shadow: rgba(255, 255, 255, 0.05);
+    --accent-like: #F87171;
+}
+
+/* apply directives */
+.flexbox {
+    @apply flex justify-center items-center;
+}
+
+.vflexbox {
+    @apply flex flex-col justify-center items-center;
+}
+
+.btnClasses {
+  @apply w-28 md:w-32 h-10 md:h-12 flex items-center justify-center 
+  text-[#F8FAFC] rounded-md bg-[var(--btn-primary)] 
+  hover:bg-[var(--btn-hover)] border border-[var(--border-color)] 
+  cursor-pointer font-semibold;
+}
+
+
+
+/* This is the importent line to write if we want to toggle theme */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *))
