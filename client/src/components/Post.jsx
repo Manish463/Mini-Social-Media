@@ -1,0 +1,224 @@
+import { useState, useEffect, useRef } from 'react'
+import Cookies from 'universal-cookie'
+import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+
+const Post = () => {
+  // Initialization
+  const cookie = new Cookies()
+  const nevigate = useNavigate()
+  const apiurl = import.meta.env.VITE_API_URL
+
+  // declaring state and ref
+  const [user, setUser] = useState({})
+  const [post, setPost] = useState([])
+  const [likeCount, setLikeCount] = useState(0)
+  const contentRef = useRef(null)
+
+  // fetching data
+  useEffect(() => {
+    const getData = async () => {
+      const response = await fetch(`${apiurl}/posts`, {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          "Authorization": `Bearer ${cookie.get('token')}`
+        }
+      })
+      const res = await response.json();
+      if (response.status === 200) {
+        setUser(res.data.user);
+        setPost(res.data.posts);
+      } else {
+        toast.error(res.message)
+      }
+
+      // calculating total likes
+      let arr = user.posts
+      for (let post of arr) {
+        setLikeCount(post.likes.length)
+      }
+    }
+    
+    getData()
+
+  }, [user, post])
+
+  // handling submit form
+  const onSubmit = async () => {
+    const content = contentRef.current.value;
+    if(content.split(" ").length >= 15) {
+      const response = await fetch(`${apiurl}/posts/create`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          "Authorization": `Bearer ${cookie.get('token')}`
+        },
+        body: JSON.stringify({ content: contentRef.current.value })
+      })
+      const res = await response.json()
+      if(response.status === 200) {
+        toast.success(res.message)
+      } else {
+        toast.error(res.message)
+      }
+      contentRef.current.value = ""
+    } else {
+      toast.error("Post creation failed!")
+      toast.error("Post should contain al least 15 words.")
+    }
+  }
+  
+  // functions
+  const likePost = async (id) => {
+    await fetch(`${apiurl}/posts/like/${id}`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        "Authorization": `Bearer ${cookie.get('token')}`
+      }
+    })
+  }
+
+  const deletePost = async (postid) => {
+    const response = await fetch(`${apiurl}/posts/delete/${postid}`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': `Bearer ${cookie.get('token')}`
+      }
+    })
+    const res = await response.json()
+    if (response.status === 200) {
+      toast.success(res.message)
+    } else {
+      toast.error(res.message)
+    }
+  }
+
+  const logOut = () => {
+    cookie.remove('token')
+    nevigate('/')
+  }
+
+  const calculateTime = (date) => {
+    const year = 60 * 60 * 24 * 365
+    const month = 60 * 60 * 24 * 30
+    const week = 60 * 60 * 24 * 7
+    const day = 60 * 60 * 24
+    const hour = 60 * 60
+    const min = 60
+
+    let time = (Date.now() - Date.parse(date)) / 1000
+    if (time >= year) {
+      return `${(time / year).toFixed(0)} year ago`
+    } else if (time >= month) {
+      return `${(time / month).toFixed(0)} month ago`
+    } else if (time >= week) {
+      return `${(time / week).toFixed(0)} week ago`
+    } else if (time >= day) {
+      return `${(time / day).toFixed(0)} day ago`
+    } else if (time >= hour) {
+      return `${(time / hour).toFixed(0)} hour ago`
+    } else if (time >= min) {
+      return `${(time / min).toFixed(0)} min ago`
+    } else {
+      return 'now'
+    }
+  }
+
+  return (
+    <main className='min-h-screen w-full bg-(--bg-main) vflexbox justify-start! p-4'>
+      <ToastContainer />
+      <section className='min-h-1/2 w-full flex flex-col items-start p-4'>
+
+        <button className='btnClasses bg-red-500! self-end mb-2' onClick={logOut}>Logout</button>
+
+        <div className='flexbox justify-start! gap-4 md:gap-6 w-full mb-4'>
+          <div className='w-22 h-22 md:w-26 md:h-26 rounded-full border border-(--border-color) overflow-hidden'>
+            <img src={`${apiurl}/images/profilepic/${user.profilepic}`} alt="" />
+          </div>
+          <div className='h-full w-fit md:w-4/5 vflexbox items-start! justify-evenly!'>
+            <h2 className='text-4xl md:text-5xl font-bold text-(--text-primary)'>{user.name && user.name.split(' ')[0]}</h2>
+            <p className='flexbox justify-start! gap-12 text-(--text-secondary) text-xs md:text-sm'>
+              <span className='flex gap-2'>
+                <span>Likes:</span>
+                <span>{String(likeCount).padStart(3, '0')}</span>
+              </span>
+              <span className='flex gap-2'>
+                <span>Posts:</span>
+                <span>{user.posts ? String(user.posts.length).padStart(3, '0') : '000'}</span>
+              </span>
+            </p>
+            <Link to='/profile' className='flexbox justify-start! text-blue-500 text-xs md:text-sm gap-2'> <span>View Profile</span> <span className='w-0.5'><i className="fa-solid fa-arrow-up-right-from-square"></i></span> </Link>
+          </div>
+        </div>
+
+        <p className='text-(--text-primary) pl-2'>Here you can create a new post here.</p>
+
+        <div className='w-full'>
+          <textarea ref={contentRef} className='w-full md:w-3/4 h-32 border border-(--border-color) rounded-md resize-none bg-(--input-bg) text-(--text-secondary) p-4 my-1' placeholder='What is in your mind?'></textarea>
+          <button onClick={onSubmit} className='btnClasses w-38!'>Create Post</button>
+        </div>
+      </section>
+
+      <div className='w-full h-0.5 bg-(--border-color) my-2'></div>
+
+      <section className='w-full p-4'>
+
+        <h3 className='text-lg text-(--text-primary) font-semibold mb-4'>All Posts</h3>
+
+        <div className="posts min-h-1/2 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-4 justify-center py-2">
+          {post && post.map((p) => {
+            return <div key={p._id} className="post p-6 rounded-md grid grid-rows-[auto,1fr,auto] gap-5 border border-(--border-color) bg-(--card-bg)">
+              <div className="info flex items-center gap-4">
+                <div className="img w-14 h-14 rounded-full overflow-hidden border border-(--border-color) object-center">
+                  <img
+                    onClick={() => console.log(p.likes.length)}
+                    className="object-cover w-full h-full"
+                    src={`${apiurl}/images/profilepic/${p.user.profilepic}`}
+                    alt=""
+                  />
+                </div>
+                <div className="username">
+                  <h4 className="text-blue-500 text-lg font-medium">{p.user.username}</h4>
+                  <p className="text-(--text-secondary) text-xs mt-1">
+                    <span className='mr-1'>&#9679;</span>
+                    {calculateTime(p.date)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="content">
+                <p className="text-sm text-(--text-primary) leading-relaxed">
+                  {p.content}
+                </p>
+              </div>
+
+              <div className="btns flex gap-6 pt-2 text-sm">
+                <span onClick={() => likePost(p._id)} className="flex gap-1 cursor-pointer">
+                  <span className='text-(--text-secondary)'>{p.likes && p.likes.length}</span>
+                  <span className='text-blue-400'>
+                    {p.likes.indexOf(user._id) == -1 ? <i className="fa-regular fa-thumbs-up"></i> : <i className="fa-solid fa-thumbs-up"></i>}
+                  </span>
+                </span>
+                {p.user._id == user._id && <span onClick={() => deletePost(p._id)} className="flex gap-1 text-red-400 cursor-pointer">
+                  <span className=''>Delete</span>
+                  <span className=''>
+                    <i className="fa-solid fa-trash"></i>
+                  </span>
+                </span>}
+              </div>
+            </div>
+
+          }).reverse()}
+
+        </div>
+
+      </section>
+    </main>
+  )
+}
+
+export default Post
