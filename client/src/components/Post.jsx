@@ -13,42 +13,35 @@ const Post = () => {
   // declaring state and ref
   const [user, setUser] = useState({})
   const [post, setPost] = useState([])
-  const [likeCount, setLikeCount] = useState(0)
+  // const [likeCount, setLikeCount] = useState(0)
   const contentRef = useRef(null)
 
   // fetching data
-  useEffect(() => {
-    const getData = async () => {
-      const response = await fetch(`${apiurl}/posts`, {
-        method: 'GET',
-        headers: {
-          'content-type': 'application/json',
-          "Authorization": `Bearer ${cookie.get('token')}`
-        }
-      })
-      const res = await response.json();
-      if (response.status === 200) {
-        setUser(res.data.user);
-        setPost(res.data.posts);
-      } else {
-        toast.error(res.message)
+  const getData = async () => {
+    const response = await fetch(`${apiurl}/posts`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        "Authorization": `Bearer ${cookie.get('token')}`
       }
-
-      // calculating total likes
-      let arr = user.posts
-      for (let post of arr) {
-        setLikeCount(post.likes.length)
-      }
+    })
+    const res = await response.json();
+    if (response.status === 200) {
+      setUser(res.data.user);
+      setPost(res.data.posts);
+    } else {
+      toast.error(res.message)
     }
-    
+  }
+
+  useEffect(() => {
     getData()
-
-  }, [user, post])
-
+  }, [])
+  
   // handling submit form
   const onSubmit = async () => {
     const content = contentRef.current.value;
-    if(content.split(" ").length >= 15) {
+    if (content.split(" ").length >= 15) {
       const response = await fetch(`${apiurl}/posts/create`, {
         method: 'POST',
         headers: {
@@ -58,8 +51,9 @@ const Post = () => {
         body: JSON.stringify({ content: contentRef.current.value })
       })
       const res = await response.json()
-      if(response.status === 200) {
+      if (response.status === 200) {
         toast.success(res.message)
+        getData()
       } else {
         toast.error(res.message)
       }
@@ -69,7 +63,7 @@ const Post = () => {
       toast.error("Post should contain al least 15 words.")
     }
   }
-  
+
   // functions
   const likePost = async (id) => {
     await fetch(`${apiurl}/posts/like/${id}`, {
@@ -79,7 +73,17 @@ const Post = () => {
         "Authorization": `Bearer ${cookie.get('token')}`
       }
     })
+    getData()
   }
+
+  // const calculateLike = () => {
+  //   let sum = 0;
+  //   for(let i=0; i<5; i++) {
+  //     // sum += user.posts[i].likes.length
+  //   }
+  //   console.log(user.posts.length)
+  //   return sum
+  // }
 
   const deletePost = async (postid) => {
     const response = await fetch(`${apiurl}/posts/delete/${postid}`, {
@@ -92,6 +96,7 @@ const Post = () => {
     const res = await response.json()
     if (response.status === 200) {
       toast.success(res.message)
+      getData()
     } else {
       toast.error(res.message)
     }
@@ -142,16 +147,16 @@ const Post = () => {
           <div className='h-full w-fit md:w-4/5 vflexbox items-start! justify-evenly!'>
             <h2 className='text-4xl md:text-5xl font-bold text-(--text-primary)'>{user.name && user.name.split(' ')[0]}</h2>
             <p className='flexbox justify-start! gap-12 text-(--text-secondary) text-xs md:text-sm'>
-              <span className='flex gap-2'>
+              {/* <span className='flex gap-2'>
                 <span>Likes:</span>
-                <span>{String(likeCount).padStart(3, '0')}</span>
-              </span>
+                <span>000</span>
+              </span> */}
               <span className='flex gap-2'>
                 <span>Posts:</span>
                 <span>{user.posts ? String(user.posts.length).padStart(3, '0') : '000'}</span>
               </span>
             </p>
-            <Link to='/profile' className='flexbox justify-start! text-blue-500 text-xs md:text-sm gap-2'> <span>View Profile</span> <span className='w-0.5'><i className="fa-solid fa-arrow-up-right-from-square"></i></span> </Link>
+            <Link to={`/${user.username}`} className='flexbox justify-start! text-blue-500 text-xs md:text-sm gap-2'> <span>View Profile</span> <span className='w-0.5'><i className="fa-solid fa-arrow-up-right-from-square"></i></span> </Link>
           </div>
         </div>
 
@@ -197,9 +202,9 @@ const Post = () => {
               </div>
 
               <div className="btns flex gap-6 pt-2 text-sm">
-                <span onClick={() => likePost(p._id)} className="flex gap-1 cursor-pointer">
+                <span className="flex gap-1">
                   <span className='text-(--text-secondary)'>{p.likes && p.likes.length}</span>
-                  <span className='text-blue-400'>
+                  <span onClick={() => p.user._id != user._id && likePost(p._id)} className='text-blue-400 cursor-pointer'>
                     {p.likes.indexOf(user._id) == -1 ? <i className="fa-regular fa-thumbs-up"></i> : <i className="fa-solid fa-thumbs-up"></i>}
                   </span>
                 </span>

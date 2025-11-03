@@ -4,6 +4,7 @@ import Register from "./components/Register"
 import Login from "./components/Login"
 import Post from "./components/Post"
 import Profile from './components/Profile'
+import Edit from './components/Edit'
 import ThemeToggle from "./components/ThemeToggle";
 
 function App() {
@@ -15,7 +16,8 @@ function App() {
         <Route path="/register" element={<><Register /><ThemeToggle /></>} />
         <Route path="/login" element={<><Login /><ThemeToggle /></>} />
         <Route path="/posts" element={<><Post /><ThemeToggle /></>} />
-        <Route path="/profile" element={<><Profile /><ThemeToggle /></>} />
+        <Route path="/:user" element={<><Profile /><ThemeToggle /></>} />
+        <Route path="/:user/edit" element={<><Edit /><ThemeToggle /></>} />
       </Routes>
     </div>
   );
