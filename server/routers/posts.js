@@ -55,6 +55,8 @@ router.get('/delete/:slug', isLoggedIn, async (req, res) => {
     const postid = req.params.slug;
     try {
         const posts = await postModel.findOneAndDelete({_id: postid})
+        await userModel.updateOne({email: req.user.email}, {$pull: {posts: postid}})
+
         res.status(200).json({ success: true, error: false, message: "Post deleted successfully!" })
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: error.message })

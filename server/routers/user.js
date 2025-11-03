@@ -22,6 +22,16 @@ router.get('/', isLoggedIn, async (req, res) => {
     }
 })
 
+// return the user data to edit page
+router.get('/edit', isLoggedIn, async (req, res) => {
+    try {
+        const user = await userModel.findOne({username: req.currUser})
+        res.status(200).json({ success: true, error: false, data: user })
+    } catch (error) {
+        res.status(500).json({ success: false, error: true, message: error.message })
+    }
+})
+
 // update the user data
 router.put('/edit', isLoggedIn, upload.single("image"), async (req, res) => {
     const {name, email} = req.body
