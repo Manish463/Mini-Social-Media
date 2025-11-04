@@ -15,7 +15,7 @@ const router = express.Router()
 // return the user data
 router.get('/', isLoggedIn, async (req, res) => {
     try {
-        const user = await userModel.findOne({username: req.currUser})
+        const user = await userModel.findOne({ username: req.currUser })
         res.status(200).json({ success: true, error: false, data: user })
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: error.message })
@@ -25,7 +25,7 @@ router.get('/', isLoggedIn, async (req, res) => {
 // return the user data to edit page
 router.get('/edit', isLoggedIn, async (req, res) => {
     try {
-        const user = await userModel.findOne({username: req.currUser})
+        const user = await userModel.findOne({ username: req.currUser })
         res.status(200).json({ success: true, error: false, data: user })
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: error.message })
@@ -34,18 +34,22 @@ router.get('/edit', isLoggedIn, async (req, res) => {
 
 // update the user data
 router.put('/edit', isLoggedIn, upload.single('profilepic'), async (req, res) => {
-    const {name, phone, DOB, add, email} = req.body
-    
+    const { name, phone, DOB, add, email } = req.body
+
     try {
-        let user = await userModel.findOne({email})
-        
-        if(user.profilepic !== 'default.jpg' && req.file) {            
-            const filePath = path.join(__dirname, "../public", "images", "profilepic", user.profilepic);
-            await fs.unlink(filePath)
+        let user = await userModel.findOne({ email })
+
+        if (req.file) {
+            if (user.profilepic !== 'default.jpg') {
+                const filePath = path.join(__dirname, "../public", "images", "profilepic", user.profilepic);
+                await fs.unlink(filePath)
+            }
+            user.profilepic = req.file.filename
+            await user.save()
         }
-        
-        user = await userModel.findOneAndUpdate({ email }, {name, phone, DOB, add, profilepic: req.file.filename})
-        
+
+        user = await userModel.findOneAndUpdate({ email }, { name, phone, DOB, add })
+
         res.status(200).json({ success: true, error: false, message: "Data updated successfully." })
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: error.message })
@@ -54,7 +58,7 @@ router.put('/edit', isLoggedIn, upload.single('profilepic'), async (req, res) =>
 
 // delete the profilepic
 router.get('/profilepic/delete/:slug', isLoggedIn, async (req, res) => {
-    let user = await userModel.findOne({email: req.user.email})
+    let user = await userModel.findOne({ email: req.user.email })
     user.profilepic = "default.jpg"
     await user.save()
 
@@ -63,7 +67,7 @@ router.get('/profilepic/delete/:slug', isLoggedIn, async (req, res) => {
     try {
         await fs.unlink(filePath)
         res.status(200).json({ success: true, error: false, message: "Profilepic deleted successfully." })
-    } catch(err) {
+    } catch (err) {
         console.log("Error:", err)
         res.status(500).json({ success: false, error: true, message: err.message })
     }
