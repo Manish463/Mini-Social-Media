@@ -42,13 +42,13 @@ const Profile = () => {
       <nav className='h-[10vh] w-full flexbox justify-between! px-4'>
         <button onClick={() => nevigate(-1)} className="flex gap-2 text-blue-500 cursor-pointer">
           <span><i className="fa-solid fa-arrow-left"></i></span>
-          <span>Go Back</span>
+          <span className="md:inline-block hidden">Go Back</span>
         </button>
         <div className="btns flexbox gap-4">
-          <Link to={`/${user.username}/edit`} className="btnClasses">
+          <Link to={`/${user.username}/edit`} className="w-18 md:w-32 h-8 md:h-12 flexbox text-[#F8FAFC] rounded-md bg-(--btn-primary) border border-(--border-color) cursor-pointer font-semibold self-end mb-2 text-sm md:text-md">
             Edit
           </Link>
-          <button className='btnClasses bg-red-500! self-end' onClick={logOut}>Logout</button>
+          <button className='w-18 md:w-32 h-8 md:h-12 flexbox text-[#F8FAFC] rounded-md bg-red-500 border border-(--border-color) cursor-pointer font-semibold self-end mb-2 text-sm md:text-md' onClick={logOut}>Logout</button>
         </div>
       </nav>
       <main className="w-full md:w-4/5 p-8 md:p-12 vflexbox gap-8">
@@ -83,7 +83,6 @@ const Profile = () => {
               </div>
             ))}
           </div>
-
 
         </section>
       </main>

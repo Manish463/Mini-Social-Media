@@ -59,22 +59,22 @@ const Register = () => {
           <h3 className='text-3xl md:text-4xl font-bold mb-1'>Register</h3>
           <p className='text-xs md:text-sm'>Already have a Account? <Link to='/login' className='text-blue-500 font-semibold'>Login</Link> </p>
           <div className='w-full mt-8 relative  text-sm md:text-md'>
-            <input type="text" {...register('name', { required: { value: true, message: "Enter your name first" }, minLength: { value: 3, message: "Name should contain at least 3 Charactor" } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12' placeholder='Name' />
+            <input type="text" {...register('name', { required: { value: true, message: "Enter your name first" }, minLength: { value: 3, message: "Name should contain at least 3 Charactor" } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12 focus:outline-2 focus:outline-(--btn-primary)' placeholder='Name' />
             <span className='absolute right-3 top-3'><i className="fa-solid fa-signature"></i></span>
             {errors.name && <span className='text-xs text-red-500'>{errors.name.message}</span>}
           </div>
           <div className='w-full mt-4 relative  text-sm md:text-md'>
-            <input type="text" {...register('username', { required: { value: true, message: "Enter username first" } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12' placeholder='Username' />
+            <input type="text" {...register('username', { required: { value: true, message: "Enter username first" } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12 focus:outline-2 focus:outline-(--btn-primary)' placeholder='Username' />
             <span className='absolute right-3 top-3'><i className="fa-solid fa-user"></i></span>
             {errors.username && <span className='text-xs text-red-500'>{errors.username.message}</span>}
           </div>
           <div className='w-full mt-4 relative  text-sm md:text-md'>
-            <input type="email" {...register('email', { required: { value: true, message: "Enter an email" } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12' placeholder='Email' />
+            <input type="email" {...register('email', { required: { value: true, message: "Enter an email" } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12 focus:outline-2 focus:outline-(--btn-primary)' placeholder='Email' />
             <span className='absolute right-3 top-3'><i className="fa-solid fa-envelope"></i></span>
             {errors.email && <span className='text-xs text-red-500'>{errors.email.message}</span>}
           </div>
           <div className='w-full mt-4 relative  text-sm md:text-md'>
-            <input type={`${show ? "text" : "password"}`} {...register('password', { required: { value: true, message: "Enter a strong password", minLength: { value: 8, message: "Enter your password" } } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12' placeholder='Password' />
+            <input type={`${show ? "text" : "password"}`} {...register('password', { required: { value: true, message: "Enter a strong password", minLength: { value: 8, message: "Enter your password" } } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12 focus:outline-2 focus:outline-(--btn-primary)' placeholder='Password' />
             <span className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShow(!show)}>
               { show ? <i className="fa-solid fa-lock-open"></i> : <i className="fa-solid fa-lock"></i>}
             </span>

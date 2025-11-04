@@ -64,12 +64,12 @@ const Login = () => {
           <h3 className='text-3xl md:text-4xl font-bold mb-1'>Login</h3>
           <p className='text-xs md:text-sm'>Don't have a Account? <Link to='/register' className='text-blue-500 font-semibold'>Register</Link> </p>
           <div className='w-full mt-8 relative text-sm md:text-md'>
-            <input type="email" {...register('email', { required: { value: true, message: "Enter an email" } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12' placeholder='Email' />
+            <input type="email" {...register('email', { required: { value: true, message: "Enter an email" } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12 focus:outline focus:outline-(--btn-primary)' placeholder='Email' />
             <span className='absolute right-3 top-3'><i className="fa-solid fa-envelope"></i></span>
             {errors.email && <span className='text-xs text-red-500'>{errors.email.message}</span>}
           </div>
           <div className='w-full mt-4 relative text-sm md:text-md'>
-            <input type={`${show ? 'text' : 'password'}`} {...register('password', { required: { value: true, message: "Enter a strong password", minLength: { value: 8, message: "Enter your password" } } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12' placeholder='Password' />
+            <input type={`${show ? 'text' : 'password'}`} {...register('password', { required: { value: true, message: "Enter a strong password", minLength: { value: 8, message: "Enter your password" } } })} className='w-full rounded-md bg-(--input-bg) text-(--text-secondary) px-4 py-2 h-10 md:h-12 focus:outline focus:outline-(--btn-primary)' placeholder='Password' />
             <span className='absolute right-3 top-3 cursor-pointer' onClick={()=>setShow(!show)}>
               { show ? <i className="fa-solid fa-lock-open"></i> : <i className="fa-solid fa-lock"></i>}
             </span>

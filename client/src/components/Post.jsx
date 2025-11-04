@@ -37,7 +37,7 @@ const Post = () => {
   useEffect(() => {
     getData()
   }, [])
-  
+
   // handling submit form
   const onSubmit = async () => {
     const content = contentRef.current.value;
@@ -136,9 +136,9 @@ const Post = () => {
   return (
     <main className='min-h-screen w-full bg-(--bg-main) vflexbox justify-start! p-4'>
       <ToastContainer />
-      <section className='min-h-1/2 w-full flex flex-col items-start p-4'>
+      <section className='min-h-1/2 w-full flex flex-col items-start md:p-4'>
 
-        <button className='btnClasses bg-red-500! self-end mb-2' onClick={logOut}>Logout</button>
+        <button className='w-18 md:w-32 h-8 md:h-12 flexbox text-[#F8FAFC] rounded-md bg-red-500 border border-(--border-color) cursor-pointer font-semibold self-end mb-2 text-sm md:text-md' onClick={logOut}>Logout</button>
 
         <div className='flexbox justify-start! gap-4 md:gap-6 w-full mb-4'>
           <div className='w-24 h-24 md:w-28 md:h-28 rounded-full border border-(--border-color) overflow-hidden shrink-0 object-center'>
@@ -168,15 +168,15 @@ const Post = () => {
         </div>
       </section>
 
-      <div className='w-full h-0.5 bg-(--border-color) my-2'></div>
+      <div className='w-full h-0.5 bg-(--border-color) my-4 md:my-2'></div>
 
-      <section className='w-full p-4'>
+      <section className='w-full md:p-4'>
 
-        <h3 className='text-lg text-(--text-primary) font-semibold mb-4'>All Posts</h3>
+        <h3 className='text-md md:text-lg text-(--text-primary) font-semibold mb-2 md:mb-4'>All Posts</h3>
 
-        <div className="posts min-h-1/2 grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-4 justify-center py-2">
+        <div className="posts min-h-1/2 grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4 justify-center py-2">
           {post && post.map((p) => {
-            return <div key={p._id} className="post p-6 rounded-md grid grid-rows-[auto,1fr,auto] gap-5 border border-(--border-color) bg-(--card-bg)">
+            return <div key={p._id} className="post p-4 md:p-6 rounded-md grid grid-rows-[auto,1fr,auto] gap-3 md:gap-5 border border-(--border-color) bg-(--card-bg)">
               <div className="info flex items-center gap-4">
                 <div className="img w-14 h-14 rounded-full overflow-hidden border border-(--border-color) object-center">
                   <img
