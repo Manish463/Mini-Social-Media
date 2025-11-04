@@ -141,10 +141,10 @@ const Post = () => {
         <button className='btnClasses bg-red-500! self-end mb-2' onClick={logOut}>Logout</button>
 
         <div className='flexbox justify-start! gap-4 md:gap-6 w-full mb-4'>
-          <div className='w-22 h-22 md:w-26 md:h-26 rounded-full border border-(--border-color) overflow-hidden'>
-            <img src={`${apiurl}/images/profilepic/${user.profilepic}`} alt="" />
+          <div className='w-24 h-24 md:w-28 md:h-28 rounded-full border border-(--border-color) overflow-hidden shrink-0 object-center'>
+            <img className='w-full h-full object-cover' src={`${apiurl}/images/profilepic/${user.profilepic}`} alt="" />
           </div>
-          <div className='h-full w-fit md:w-4/5 vflexbox items-start! justify-evenly!'>
+          <div className='h-full w-fit md:w-4/5 vflexbox items-start! justify-evenly! gap-2'>
             <h2 className='text-4xl md:text-5xl font-bold text-(--text-primary)'>{user.name && user.name.split(' ')[0]}</h2>
             <p className='flexbox justify-start! gap-12 text-(--text-secondary) text-xs md:text-sm'>
               {/* <span className='flex gap-2'>

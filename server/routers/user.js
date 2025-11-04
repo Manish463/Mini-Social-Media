@@ -33,21 +33,19 @@ router.get('/edit', isLoggedIn, async (req, res) => {
 })
 
 // update the user data
-router.put('/edit', isLoggedIn, upload.single("image"), async (req, res) => {
-    const {name, email} = req.body
+router.put('/edit', isLoggedIn, upload.single('profilepic'), async (req, res) => {
+    const {name, phone, DOB, add, email} = req.body
     
     try {
-        let user = await userModel.findOne({ email })
-    
-        if(user.profilepic != 'default.jpg') {
-            const filePath = path.join(__dirname, "public", "image", "uploads", user.profilepic);
-
+        let user = await userModel.findOne({email})
+        
+        if(user.profilepic !== 'default.jpg' && req.file) {            
+            const filePath = path.join(__dirname, "../public", "images", "profilepic", user.profilepic);
             await fs.unlink(filePath)
         }
-    
-        user.profilepic = req.file.filename
-        user.name = name
-        await user.save()
+        
+        user = await userModel.findOneAndUpdate({ email }, {name, phone, DOB, add, profilepic: req.file.filename})
+        
         res.status(200).json({ success: true, error: false, message: "Data updated successfully." })
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: error.message })

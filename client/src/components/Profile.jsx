@@ -53,10 +53,10 @@ const Profile = () => {
       </nav>
       <main className="w-full md:w-4/5 p-8 md:p-12 vflexbox gap-8">
         <section className="vflexbox">
-          <div className="md:w-42 w-36 md:h-42 h-36 rounded-full overflow-hidden border border-(--border-color) mb-2">
-            <img src={`${apiurl}/images/profilepic/${user.profilepic}`} alt="" />
+          <div className="md:w-42 w-36 md:h-42 h-36 rounded-full overflow-hidden border border-(--border-color) mb-2 object-center">
+            <img className="w-full h-full object-cover" src={`${apiurl}/images/profilepic/${user.profilepic}`} alt="" />
           </div>
-          <h1 className="text-(--text-primary) text-3xl md:text-4xl font-bold">
+          <h1 className="text-(--text-primary) text-3xl md:text-4xl font-bold text-center">
             {user.name}
           </h1>
           <div className="flexbox gap-15 text-gray-400 text-sm">
@@ -73,9 +73,9 @@ const Profile = () => {
               { label: "Name", value: user.name },
               { label: "Username", value: user.username },
               { label: "Email", value: user.email },
-              { label: "Phone No.", value: user.phone },
-              { label: "Date of Birth", value: user.DOB },
-              { label: "Address", value: user.add },
+              { label: "Phone No.", value: user.phone || 'x'.padStart(10, 'x') },
+              { label: "Date of Birth", value: user.DOB || 'dd-mm-yyyy'},
+              { label: "Address", value: user.add || 'NA' },
             ].map((item, index) => (
               <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
                 <div className="font-medium text-sm md:text-base">{item.label}:</div>
