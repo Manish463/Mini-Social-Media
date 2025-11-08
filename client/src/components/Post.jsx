@@ -26,7 +26,7 @@ const Post = () => {
       }
     })
     const res = await response.json();
-    if (response.status === 200) {
+    if (res.success) {
       setUser(res.data.user);
       setPost(res.data.posts);
     } else {
@@ -51,7 +51,7 @@ const Post = () => {
         body: JSON.stringify({ content: contentRef.current.value })
       })
       const res = await response.json()
-      if (response.status === 200) {
+      if (res.success) {
         toast.success(res.message)
         getData()
       } else {

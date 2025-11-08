@@ -24,7 +24,7 @@ const Profile = () => {
         },
       })
       const res = await response.json();
-      if (response.status === 200) {
+      if (res.success) {
         setUser(res.data)
         // console.log(res.data)
       }

@@ -37,7 +37,7 @@ const Register = () => {
 
       const res = await response.json()
 
-      if (response.status === 200) {
+      if (res.success) {
         cookie.set('token', res.token)
         naviagte('/posts')
       } else {
