@@ -27,7 +27,7 @@ const Register = () => {
     setIsSubmiting(true)
 
     try {
-      const response = await fetch(`http://localhost:3000/register`, {
+      const response = await fetch(`${apiurl}/register`, {
         method: 'POST',
         headers: {
           'content-type': 'application/json'
