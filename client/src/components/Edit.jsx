@@ -80,6 +80,8 @@ const EditProfile = () => {
 
   const logOut = () => {
     cookie.remove('token')
+    setUser(null)
+    setPosts(null)
     navigate('/')
   }
 
