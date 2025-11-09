@@ -13,7 +13,7 @@ const EditProfile = () => {
   const location = useLocation()
   const cookie = new Cookies()
   const navigate = useNavigate()
-  const { user, setUser, getData } = useContexts()
+  const { user, setUser, getData, setPosts } = useContexts()
   const [isSubmiting, setIsSubmiting] = useState(false)
 
   // form object destructuring and setting default value
@@ -114,7 +114,7 @@ const EditProfile = () => {
           <button
             type="button"
             onClick={handleRemove}
-            className="text-sm text-red-500 underline cursor-pointer"
+            className="text-sm text-red-400 underline cursor-pointer hover:text-red-600"
           >
             Remove Picture
           </button>

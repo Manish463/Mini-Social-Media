@@ -12,7 +12,7 @@ const Profile = () => {
   const location = useLocation()
 
   // declaring states 
-  const {user, setUser, setPosts} = useContexts()
+  const { user, setUser, setPosts } = useContexts()
 
   const logOut = () => {
     cookie.remove('token')
@@ -58,7 +58,7 @@ const Profile = () => {
               { label: "Username", value: user.username },
               { label: "Email", value: user.email },
               { label: "Phone No.", value: user.phone || 'x'.padStart(10, 'x') },
-              { label: "Date of Birth", value: user.DOB || 'dd-mm-yyyy'},
+              { label: "Date of Birth", value: user.DOB || 'dd-mm-yyyy' },
               { label: "Address", value: user.add || 'NA' },
             ].map((item, index) => (
               <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">

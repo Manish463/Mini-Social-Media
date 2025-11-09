@@ -32,6 +32,7 @@ input[type=number] {
 
   /* Accents */
   --accent-like: #DC2626; /* Vibrant red for like buttons, notifications, etc. */
+  --bg-hover: #e5e7eb;
 }
 
 
@@ -47,6 +48,7 @@ input[type=number] {
     --input-bg: #293241;
     --card-shadow: rgba(255, 255, 255, 0.05);
     --accent-like: #F87171;
+    --bg-hover: #1e2939;
 }
 
 * {
