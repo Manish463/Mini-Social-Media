@@ -62,7 +62,7 @@ router.put('/edit', isLoggedIn, upload.single('profilepic'), async (req, res) =>
             await user.save();
         }
 
-        user = await userModel.findOneAndUpdate({ email }, { name, phone, DOB, add })
+        const user = await userModel.findOneAndUpdate({ email }, { name, phone, DOB, add });
 
         res.status(200).json({ success: true, error: false, message: "Data updated successfully." })
     } catch (error) {
