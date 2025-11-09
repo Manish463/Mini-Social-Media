@@ -1,8 +1,8 @@
 import React from 'react'
-import { useTheme } from '../context/AppContext'
+import { useContexts } from '../context/AppContext'
 
 const ThemeToggle = () => {
-    const { theme, darkTheme, lightTheme } = useTheme()
+    const { theme, darkTheme, lightTheme } = useContexts()
 
     return (
         <div className='fixed bottom-5 right-5 flexbox gap-2 md:gap-5 text-(--text-secondary)'>

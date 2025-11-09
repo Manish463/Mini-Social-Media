@@ -6,7 +6,7 @@ import { isLoggedIn } from '../controllers/authControllers.js'
 const router = express.Router()
 
 // Return all posts data
-router.get('/', isLoggedIn, async (req, res) => {
+router.get('/data', isLoggedIn, async (req, res) => {
     try {
         const user = await userModel.findOne({ email: req.user.email }).populate('posts')
         const posts = await postModel.find().populate('user')
@@ -26,14 +26,14 @@ router.post('/create', isLoggedIn, async (req, res) => {
         let post = await postModel.create({ user: user._id, content })
         user.posts.push(post._id)
         await user.save()
-        res.status(200).json({ success: true, error: false, data: post, message: "Post created successfully!" })
+        res.status(201).json({ success: true, error: false, data: post, message: "Post created successfully!" })
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: error.message })
     }
 })
 
 // like a post
-router.get('/like/:slug', isLoggedIn, async (req, res) => {
+router.post('/like/:slug', isLoggedIn, async (req, res) => {
     try {
         const post = await postModel.findOne({ _id: req.params.slug }).populate("user")
     
@@ -44,14 +44,14 @@ router.get('/like/:slug', isLoggedIn, async (req, res) => {
         }
     
         await post.save()
-        res.status(200).json({ success: true, error: false, message: "Post liked successfully!" })
+        res.status(200).json({ success: true, error: false, data: post, message: "Post liked successfully!" })
     } catch (error) {
         res.status(500).json({ success: false, error: true, message: error.message })
     }
 })
 
 // delete a post
-router.get('/delete/:slug', isLoggedIn, async (req, res) => {
+router.delete('/delete/:slug', isLoggedIn, async (req, res) => {
     const postid = req.params.slug;
     try {
         const posts = await postModel.findOneAndDelete({_id: postid})

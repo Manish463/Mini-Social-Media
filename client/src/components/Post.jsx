@@ -3,39 +3,21 @@ import Cookies from 'universal-cookie'
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
+import { useContexts } from '../context/AppContext'
 
 const Post = () => {
   // Initialization
   const cookie = new Cookies()
-  const nevigate = useNavigate()
+  const navigate = useNavigate()
   const apiurl = import.meta.env.VITE_API_URL
+  const {getData, user, posts, setUser, setPosts} = useContexts()
 
   // declaring state and ref
-  const [user, setUser] = useState({})
-  const [post, setPost] = useState([])
-  // const [likeCount, setLikeCount] = useState(0)
   const contentRef = useRef(null)
 
-  // fetching data
-  const getData = async () => {
-    const response = await fetch(`${apiurl}/posts`, {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        "Authorization": `Bearer ${cookie.get('token')}`
-      }
-    })
-    const res = await response.json();
-    if (res.success) {
-      setUser(res.data.user);
-      setPost(res.data.posts);
-    } else {
-      toast.error(res.message)
-    }
-  }
-
   useEffect(() => {
-    getData()
+    const res = getData()
+    if(!res.success) toast(res.message)
   }, [])
 
   // handling submit form
@@ -66,28 +48,20 @@ const Post = () => {
 
   // functions
   const likePost = async (id) => {
-    await fetch(`${apiurl}/posts/like/${id}`, {
-      method: 'GET',
+    const response = await fetch(`${apiurl}/posts/like/${id}`, {
+      method: 'POST',
       headers: {
         'content-type': 'application/json',
         "Authorization": `Bearer ${cookie.get('token')}`
       }
     })
+    const res = await response.json()
     getData()
   }
 
-  // const calculateLike = () => {
-  //   let sum = 0;
-  //   for(let i=0; i<5; i++) {
-  //     // sum += user.posts[i].likes.length
-  //   }
-  //   console.log(user.posts.length)
-  //   return sum
-  // }
-
   const deletePost = async (postid) => {
     const response = await fetch(`${apiurl}/posts/delete/${postid}`, {
-      method: 'GET',
+      method: 'DELETE',
       headers: {
         'content-type': 'application/json',
         'Authorization': `Bearer ${cookie.get('token')}`
@@ -100,11 +74,6 @@ const Post = () => {
     } else {
       toast.error(res.message)
     }
-  }
-
-  const logOut = () => {
-    cookie.remove('token')
-    nevigate('/')
   }
 
   const calculateTime = (date) => {
@@ -132,13 +101,20 @@ const Post = () => {
       return 'now'
     }
   }
+  
+  const logOut = () => {
+    cookie.remove('token')
+    setUser(null)
+    setPosts(null)
+    navigate('/')
+  }
 
   return (
     <main className='min-h-screen w-full bg-(--bg-main) vflexbox justify-start! p-4'>
       <ToastContainer />
       <section className='min-h-1/2 w-full flex flex-col items-start md:p-4'>
 
-        <button className='w-18 md:w-32 h-8 md:h-12 flexbox text-[#F8FAFC] rounded-md bg-red-500 border border-(--border-color) cursor-pointer font-semibold self-end mb-2 text-sm md:text-md' onClick={logOut}>Logout</button>
+        <button className='w-18 md:w-32 h-8 md:h-12 flexbox text-[#F8FAFC] rounded-md bg-red-500 border border-(--border-color) cursor-pointer font-semibold self-end mb-2 text-sm md:text-lg' onClick={logOut}>Logout</button>
 
         <div className='flexbox justify-start! gap-4 md:gap-6 w-full mb-4'>
           <div className='w-24 h-24 md:w-28 md:h-28 rounded-full border border-(--border-color) overflow-hidden shrink-0 object-center'>
@@ -147,10 +123,6 @@ const Post = () => {
           <div className='h-full w-fit md:w-4/5 vflexbox items-start! justify-evenly! gap-2'>
             <h2 className='text-4xl md:text-5xl font-bold text-(--text-primary)'>{user.name && user.name.split(' ')[0]}</h2>
             <p className='flexbox justify-start! gap-12 text-(--text-secondary) text-xs md:text-sm'>
-              {/* <span className='flex gap-2'>
-                <span>Likes:</span>
-                <span>000</span>
-              </span> */}
               <span className='flex gap-2'>
                 <span>Posts:</span>
                 <span>{user.posts ? String(user.posts.length).padStart(3, '0') : '000'}</span>
@@ -163,7 +135,7 @@ const Post = () => {
         <p className='text-(--text-primary) pl-2'>Here you can create a new post here.</p>
 
         <div className='w-full'>
-          <textarea ref={contentRef} className='w-full md:w-3/4 h-32 border border-(--border-color) rounded-md resize-none bg-(--input-bg) text-(--text-secondary) p-4 my-1' placeholder='What is in your mind?'></textarea>
+          <textarea ref={contentRef} className='w-full md:w-3/4 h-32 border border-(--border-color) rounded-md resize-none bg-(--input-bg) text-(--text-secondary) p-4 my-1 outline-transparent outline-0 focus:outline-2 focus:outline-(--btn-primary)' placeholder='What is in your mind?'></textarea>
           <button onClick={onSubmit} className='btnClasses w-38!'>Create Post</button>
         </div>
       </section>
@@ -174,8 +146,8 @@ const Post = () => {
 
         <h3 className='text-md md:text-lg text-(--text-primary) font-semibold mb-2 md:mb-4'>All Posts</h3>
 
-        <div className="posts min-h-1/2 grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4 justify-center py-2">
-          {post && post.map((p) => {
+        <div className="posts min-h-1/2 grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] md:grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-4 justify-center py-2">
+          {[...posts]?.reverse().map((p) => {
             return <div key={p._id} className="post p-4 md:p-6 rounded-md grid grid-rows-[auto,1fr,auto] gap-3 md:gap-5 border border-(--border-color) bg-(--card-bg)">
               <div className="info flex items-center gap-4">
                 <div className="img w-14 h-14 rounded-full overflow-hidden border border-(--border-color) object-center">
@@ -217,7 +189,7 @@ const Post = () => {
               </div>
             </div>
 
-          }).reverse()}
+          })}
 
         </div>
 

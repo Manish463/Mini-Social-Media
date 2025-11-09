@@ -4,31 +4,17 @@ import { useLocation } from 'react-router-dom'
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { useContexts } from "../context/AppContext";
+import { ThreeDot } from 'react-loading-indicators'
 
 const EditProfile = () => {
   //initialization
   const apiurl = import.meta.env.VITE_API_URL
   const location = useLocation()
   const cookie = new Cookies()
-  const nevigate = useNavigate()
-  const [user, setUser] = useState({})
-
-  // fetching data
-  const getData = async () => {
-    const response = await fetch(apiurl + location.pathname, {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'Authorization': `Bearer ${cookie.get('token')}`
-      }
-    })
-    const res = await response.json()
-    setUser(res.data)
-  }
-
-  useEffect(() => {
-    getData()
-  }, [])
+  const navigate = useNavigate()
+  const { user, setUser, getData } = useContexts()
+  const [isSubmiting, setIsSubmiting] = useState(false)
 
   // form object destructuring and setting default value
   const {
@@ -37,7 +23,7 @@ const EditProfile = () => {
     formState: { errors },
     reset,
   } = useForm({
-    defaultValues: user ? {...user, phone: 9999999999} : {}
+    defaultValues: user ? { ...user, phone: 9999999999 } : {}
   });
 
   useEffect(() => {
@@ -46,6 +32,7 @@ const EditProfile = () => {
 
   // submitting form
   const onSubmit = async (data) => {
+    setIsSubmiting(true)
     const formData = new FormData() // to submit a file with string fields
 
     Object.keys(data).forEach((key) => {
@@ -73,17 +60,18 @@ const EditProfile = () => {
     } catch (error) {
       toast.error(error.message)
     }
+    setIsSubmiting(false)
   };
 
   // functions
   const handleRemove = async () => {
-    const response = await fetch(`${apiurl}/${user.username}/profilepic/delete/${user.profilepic}`, {
-      method: 'GET',
+    const response = await fetch(`${apiurl}/${user.username}/profilepic/delete`, {
+      method: 'DELETE',
       headers: { Authorization: `Bearer ${cookie.get('token')}` },
     })
     const res = await response.json()
     if (res.success) {
-      getData()
+      setUser(res.data)
       toast.success(res.message)
     } else {
       toast.error(res.message)
@@ -92,32 +80,32 @@ const EditProfile = () => {
 
   const logOut = () => {
     cookie.remove('token')
-    nevigate('/')
+    navigate('/')
   }
 
   return (
-    <div className="min-h-screen w-full bg-(--bg-main) vflexbox justify-start!">
+    <div className="min-h-screen w-full bg-(--bg-main) vflexbox justify-start! pb-8">
       <ToastContainer />
       <nav className='h-[10vh] w-full flexbox justify-between! px-4'>
-        <button onClick={() => nevigate(-1)} className="flex gap-2 text-blue-500 cursor-pointer">
+        <button onClick={() => navigate(-1)} className="flex gap-2 text-blue-500 cursor-pointer">
           <span><i className="fa-solid fa-arrow-left"></i></span>
           <span className="hidden md:inline">Go Back</span>
         </button>
         <div className="btns flexbox gap-4">
-          <button className='w-18 md:w-32 h-8 md:h-12 flexbox text-[#F8FAFC] rounded-md bg-red-500 border border-(--border-color) cursor-pointer font-semibold self-end mb-2 text-sm md:text-md' onClick={logOut}>Logout</button>
+          <button className='w-18 md:w-32 h-8 md:h-12 flexbox text-[#F8FAFC] rounded-md bg-red-500 border border-(--border-color) cursor-pointer font-semibold self-end text-sm md:text-lg' onClick={logOut}>Logout</button>
         </div>
       </nav>
-      <section className="flexbox w-full px-8 py-2">
+      <section className="flexbox w-full px-4 md:px-8 py-2">
         <form
           onSubmit={handleSubmit(onSubmit)}
           encType="multipart/form-data"
-          className="w-full max-w-xl bg-(--card-bg) text-(--text-primary) rounded-md border border-(--border-color) p-8 flex flex-col gap-4"
+          className="w-full max-w-xl bg-(--card-bg) text-(--text-primary) rounded-md border border-(--border-color) p-6 flex flex-col gap-4"
         >
           <h2 className="text-2xl font-semibold text-center mb-2">Edit Profile</h2>
           <div className="w-36 h-36 rounded-full overflow-hidden border border-(--border-color) mb-2 object-center self-center">
             <img
               className="w-full h-full object-cover"
-              src={user.profilepic?.secure_url}
+              src={user?.profilepic?.secure_url}
               alt="Profile"
             />
           </div>
@@ -144,7 +132,7 @@ const EditProfile = () => {
             type="text"
             placeholder="Name"
             {...register('name', { required: { value: true, message: "Enter your name first" }, minLength: { value: 3, message: "Name should contain at least 3 Charactor" } })}
-            className="bg-(--input-bg) text-(--text-secondary) rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
+            className="w-full bg-(--input-bg) text-(--text-secondary) rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
           />
           {errors.name && (
             <p className="text-(--accent-like) text-sm">{errors.name.message}</p>
@@ -154,7 +142,7 @@ const EditProfile = () => {
             type="text"
             placeholder="Username"
             {...register("username")}
-            className="bg-(--input-bg) text-gray-400 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
+            className="w-full bg-(--input-bg) text-gray-400 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
             disabled
           />
           {errors.username && (
@@ -165,7 +153,7 @@ const EditProfile = () => {
             type="email"
             placeholder="Email"
             {...register("email")}
-            className="bg-(--input-bg) text-gray-400 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
+            className="w-full bg-(--input-bg) text-gray-400 rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
             disabled
           />
           {errors.email && (
@@ -176,28 +164,28 @@ const EditProfile = () => {
             type="number"
             placeholder="Phone"
             {...register("phone")}
-            className="bg-(--input-bg) text-(--text-secondary) rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
+            className="w-full bg-(--input-bg) text-(--text-secondary) rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
           />
 
           <input
             type="date"
             placeholder="Date of Birth"
             {...register("DOB")}
-            className="bg-(--input-bg) text-(--text-secondary) rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
+            className="w-full bg-(--input-bg) text-(--text-secondary) rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
           />
 
           <input
             type="text"
             placeholder="Address"
             {...register("add")}
-            className="bg-(--input-bg) text-(--text-secondary) rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
+            className="w-full bg-(--input-bg) text-(--text-secondary) rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-(--btn-primary)"
           />
 
           <button
             type="submit"
             className="w-full mt-2 py-2 bg-(--btn-primary) hover:bg-(--btn-hover) rounded-md text-white font-medium transition-all"
           >
-            Save Changes
+            {isSubmiting ? <ThreeDot color="#F8FAFC" size="small" /> : 'Save Changes'}
           </button>
         </form>
       </section>

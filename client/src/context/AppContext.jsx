@@ -1,3 +1,4 @@
+import Cookies from 'universal-cookie'
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AppContext = createContext();
@@ -25,11 +26,50 @@ export const AppProvider = ({ children }) => {
   const darkTheme = () => setTheme('dark')
   const lightTheme = () => setTheme('light')
 
+  // context for data //
+  const cookie = new Cookies()
+  const apiurl = import.meta.env.VITE_API_URL
+
+  const [user, setUser] = useState({})
+  const [posts, setPosts] = useState([])
+
+  // fetching data
+  const getData = async () => {
+    const response = await fetch(`${apiurl}/posts/data`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        "Authorization": `Bearer ${cookie.get('token')}`
+      }
+    })
+    const res = await response.json();
+    if (res.success) {
+      setUser(res.data.user);
+      setPosts(res.data.posts);
+    }
+    return res;
+  }
+
+  useEffect(()=> {
+    getData();
+  }, [])
+
+  const value = {
+    theme,
+    darkTheme,
+    lightTheme,
+    getData,
+    user,
+    setUser,
+    posts,
+    setPosts
+  }
+
   return (
-    <AppContext.Provider value={{ theme, darkTheme, lightTheme }}>
+    <AppContext.Provider value={value}>
       {children}
     </AppContext.Provider>
   );
 };
 
-export const useTheme = () => useContext(AppContext);
+export const useContexts = () => useContext(AppContext);
