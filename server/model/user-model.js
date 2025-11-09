@@ -9,8 +9,14 @@ const userSchema = mongoose.Schema({
     add: String,
     password: String,
     profilepic: {
-        type: String,
-        default: 'default.jpg'
+        secure_url: {
+            type: String,
+            default: 'https://res.cloudinary.com/dizherqha/image/upload/v1762653328/default_zzh0pl.jpg'
+        },
+        public_id: {
+            type: String,
+            default: ''
+        }
     },
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "post" }]
 })

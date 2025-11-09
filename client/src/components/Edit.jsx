@@ -37,7 +37,7 @@ const EditProfile = () => {
     formState: { errors },
     reset,
   } = useForm({
-    defaultValues: user || {}
+    defaultValues: user ? {...user, phone: 9999999999} : {}
   });
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const EditProfile = () => {
           <div className="w-36 h-36 rounded-full overflow-hidden border border-(--border-color) mb-2 object-center self-center">
             <img
               className="w-full h-full object-cover"
-              src={`${apiurl}/images/profilepic/${user.profilepic}`}
+              src={user.profilepic?.secure_url}
               alt="Profile"
             />
           </div>

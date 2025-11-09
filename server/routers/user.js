@@ -1,7 +1,9 @@
 import express from 'express'
 import userModel from '../model/user-model.js'
+import multer from 'multer';
+import streamifier from 'streamifier';
+import cloudinary from '../config/cloudinary.js';
 import { isLoggedIn } from '../controllers/authControllers.js'
-import upload from '../config/multer-config.js'
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import path from 'path';
@@ -11,6 +13,17 @@ import fs from 'fs/promises'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const router = express.Router()
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+
+function uploadBufferToCloudinary(buffer, options = {}) {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(options, (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+        });
+        streamifier.createReadStream(buffer).pipe(uploadStream);
+    });
+}
 
 // return the user data
 router.get('/', isLoggedIn, async (req, res) => {
@@ -37,15 +50,16 @@ router.put('/edit', isLoggedIn, upload.single('profilepic'), async (req, res) =>
     const { name, phone, DOB, add, email } = req.body
 
     try {
-        let user = await userModel.findOne({ email })
-
         if (req.file) {
-            if (user.profilepic !== 'default.jpg') {
-                const filePath = path.join(__dirname, "../public", "images", "profilepic", user.profilepic);
-                await fs.unlink(filePath)
+            const user = await userModel.findOne({ email });
+            if (user.profilepic.secure_url !== 'https://res.cloudinary.com/dizherqha/image/upload/v1762653328/default_zzh0pl.jpg') {
+                await cloudinary.uploader.destroy(user.profilepic.public_id);
             }
-            user.profilepic = req.file.filename
-            await user.save()
+
+            const result = await uploadBufferToCloudinary(req.file.buffer, { folder: 'My-Projects/Mini-social' });
+            user.profilepic.secure_url = result.secure_url;
+            user.profilepic.public_id = result.public_id;
+            await user.save();
         }
 
         user = await userModel.findOneAndUpdate({ email }, { name, phone, DOB, add })
@@ -58,16 +72,14 @@ router.put('/edit', isLoggedIn, upload.single('profilepic'), async (req, res) =>
 
 // delete the profilepic
 router.get('/profilepic/delete/:slug', isLoggedIn, async (req, res) => {
-    let user = await userModel.findOne({ email: req.user.email })
-    user.profilepic = "default.jpg"
-    await user.save()
-
-    const filePath = path.join(__dirname, `../public/images/profilepic/${req.params.slug}`);
+    const user = await userModel.findOne({ email: req.user.email })
 
     try {
-        await fs.unlink(filePath)
-        res.status(200).json({ success: true, error: false, message: "Profilepic deleted successfully." })
-    } catch (err) {
+        await cloudinary.uploader.destroy(user.profilepic.public_id);
+        user.profilepic.secure_url = 'https://res.cloudinary.com/dizherqha/image/upload/v1762653328/default_zzh0pl.jpg';
+        user.profilepic.public_id = '';
+        await user.save()
+    } catch (error) {
         console.log("Error:", err)
         res.status(500).json({ success: false, error: true, message: err.message })
     }

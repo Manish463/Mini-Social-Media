@@ -142,7 +142,7 @@ const Post = () => {
 
         <div className='flexbox justify-start! gap-4 md:gap-6 w-full mb-4'>
           <div className='w-24 h-24 md:w-28 md:h-28 rounded-full border border-(--border-color) overflow-hidden shrink-0 object-center'>
-            <img className='w-full h-full object-cover' src={`${apiurl}/images/profilepic/${user.profilepic}`} alt="" />
+            <img className='w-full h-full object-cover' src={user.profilepic?.secure_url} alt="" />
           </div>
           <div className='h-full w-fit md:w-4/5 vflexbox items-start! justify-evenly! gap-2'>
             <h2 className='text-4xl md:text-5xl font-bold text-(--text-primary)'>{user.name && user.name.split(' ')[0]}</h2>
@@ -182,7 +182,7 @@ const Post = () => {
                   <img
                     onClick={() => console.log(p.likes.length)}
                     className="object-cover w-full h-full"
-                    src={`${apiurl}/images/profilepic/${p.user.profilepic}`}
+                    src={p.user.profilepic?.secure_url}
                     alt=""
                   />
                 </div>

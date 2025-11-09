@@ -54,7 +54,7 @@ const Profile = () => {
       <main className="w-full md:w-4/5 p-8 md:p-12 vflexbox gap-8">
         <section className="vflexbox">
           <div className="md:w-42 w-36 md:h-42 h-36 rounded-full overflow-hidden border border-(--border-color) mb-2 object-center">
-            <img className="w-full h-full object-cover" src={`${apiurl}/images/profilepic/${user.profilepic}`} alt="" />
+            <img className="w-full h-full object-cover" src={user.profilepic?.secure_url} alt="" />
           </div>
           <h1 className="text-(--text-primary) text-3xl md:text-4xl font-bold text-center">
             {user.name}
