@@ -24,7 +24,7 @@ const Post = () => {
   // handling submit form
   const onSubmit = async () => {
     const content = contentRef.current.value;
-    if (content.split(" ").length >= 15) {
+    if (content.split(" ").length >= 10) {
       const response = await fetch(`${apiurl}/posts/create`, {
         method: 'POST',
         headers: {
@@ -119,7 +119,7 @@ const Post = () => {
 
         <div className='flexbox justify-start! gap-2 md:gap-4 w-full mb-4'>
           <div className='w-24 h-24 md:w-28 md:h-28 rounded-full border border-(--border-color) overflow-hidden shrink-0 object-center'>
-            <img className='w-full h-full object-cover' src={user.profilepic?.secure_url} alt="" />
+            <img className='w-full h-full object-cover' src={user?.profilepic?.secure_url} alt="" />
           </div>
           <div className='h-full w-fit md:w-4/5 vflexbox items-start! justify-evenly!'>
             <h2 className='text-4xl md:text-5xl font-bold text-(--text-primary) pl-2 mb-2'>{user.name && user.name.split(' ')[0]}</h2>
@@ -157,12 +157,12 @@ const Post = () => {
                   <img
                     onClick={() => console.log(p.likes.length)}
                     className="object-cover w-full h-full"
-                    src={p.user.profilepic?.secure_url}
+                    src={p.user?.profilepic?.secure_url}
                     alt=""
                   />
                 </div>
                 <div className="username">
-                  <h4 className="text-blue-500 text-lg font-medium">{p.user.username}</h4>
+                  <h4 className="text-blue-500 text-lg font-medium">@{p.user.username}</h4>
                   <p className="text-(--text-secondary) text-xs mt-1">
                     <span className='mr-1'>&#9679;</span>
                     {calculateTime(p.date)}
