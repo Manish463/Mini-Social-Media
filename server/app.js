@@ -6,14 +6,17 @@ import cors from 'cors'
 import indexRouter from './routers/index.js'
 import postRouter from './routers/posts.js'
 import userRouter from './routers/user.js'
-import './config/mongoose-connection.js'
+import { connectDB } from './config/mongoose-connection.js'
 
 // initializing variables
 const app = express()
 
+//connecting to data base 
+await connectDB();
+
 // middlewares
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
 // mounting the routers
